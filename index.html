@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+		<title>Hancock GNSS IMU Alignment</title>
+		<style>
+			// body { margin: 0; }
+		</style>
+	</head>
+	<body>
+        <h1>Hancock GNSS IMU Alignment</h1>
+        <div id="angles">1, 2, 3</div>
+        Floor Mount
+        <button id="pos1">0,0,0</button> 
+        <button id="pos2">0,0,90</button> 
+        <button id="pos3">0,0,180</button> 
+        <button id="pos4">0,0,270</button> 
+
+        Head Over Mount
+        <button id="pos14">-180,0,180</button> 
+        <button id="pos15">-180,0,0</button> 
+        <button id="pos16">-180,0,180</button> 
+        <button id="pos17">180,0,90</button> 
+        <br>
+
+        Front Wall
+        <button id="pos5">-90,0,90</button> 
+        <button id="pos6">90,0,270</button> 
+        <button id="pos7">0,-90,0</button> 
+        <button id="pos18">0,-90,180</button> 
+        <br>
+
+        Left Side
+        <button id="pos8">90,0,0</button> 
+        <button id="pos9">-90,0,180</button> 
+        <button id="pos10">0,-90,90</button> 
+
+        Right Side
+        <button id="pos11">-90,0,0</button> 
+        <button id="pos12">90,0,180</button> 
+        <button id="pos13">-162,-88,73</button> 
+
+        <canvas id="c"></canvas>
+
+        <script type="module">
+            // Find the latest version by visiting https://unpkg.com/three. The URL will
+            // redirect to the newest stable release.
+            // import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+            //import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/build/three.module.js';
+            import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+            import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/controls/OrbitControls.js';
+            import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/loaders/GLTFLoader.js';
+
+            const group = new THREE.Group();
+            var angles = document.getElementById("angles");
+
+            function main()
+            {
+                const canvas = document.querySelector('#c');
+                const renderer = new THREE.WebGLRenderer({canvas});
+                renderer.setClearColor(0xCCFFFF);
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                renderer.setPixelRatio(window.devicePixelRatio);
+
+                const camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 0.1, 3000 );
+                // Camera before object, looking down at 45 deg
+                camera.position.x = 0;
+                camera.position.y = 0;
+                camera.position.z = 150;
+                // camera.rotation.x = 45/180*Math.PI;
+
+                const controls = new OrbitControls(camera, canvas);
+                controls.target.set(0, 5, 0);
+                controls.update();
+
+                const scene = new THREE.Scene();
+                scene.background = new THREE.Color('darkgray');
+
+                {
+                    // X-Axis
+                    const points = [];
+                    points.push( new THREE.Vector3( 0, 0, 0 ) );
+                    points.push( new THREE.Vector3( 100, 0, 0 ) );
+                    const geometry = new THREE.BufferGeometry().setFromPoints( points );    
+                    const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+                    const line = new THREE.Line( geometry, material );
+                    scene.add( line );
+                }
+                {
+                    // Y-Axis
+                    const points = [];
+                    points.push( new THREE.Vector3( 0, 0, 0 ) );
+                    points.push( new THREE.Vector3( 0, 100, 0 ) );
+                    const geometry = new THREE.BufferGeometry().setFromPoints( points );    
+                    const material = new THREE.LineBasicMaterial( { color: 0x00ff00 } );
+                    const line = new THREE.Line( geometry, material );
+                    scene.add( line );
+                }
+                {
+                    // Z-Axis
+                    const points = [];
+                    points.push( new THREE.Vector3( 0, 0, 0 ) );
+                    points.push( new THREE.Vector3( 0, 0, 100 ) );
+                    const geometry = new THREE.BufferGeometry().setFromPoints( points );    
+                    const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+                    const line = new THREE.Line( geometry, material );
+                    scene.add( line );
+                }
+
+                {
+                    // Car Image
+                    const planeSize = 40;
+
+                    const loader = new THREE.TextureLoader();
+                    const texture = loader.load('car_top.png');
+                    const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
+                    const material = new THREE.MeshBasicMaterial( { map: texture, opacity: 0.5, transparent: true } );
+                    const mesh = new THREE.Mesh(planeGeo, material);
+                    mesh.position.z -= 12;
+                    mesh.scale.set(3, 3, 1);
+                    scene.add(mesh);
+                }
+
+                {
+                    const material_metal = new THREE.MeshPhongMaterial({color: 0x444444});
+                    const material_cover = new THREE.MeshPhongMaterial({color: 0x0022AA});
+                    const material_black = new THREE.MeshPhongMaterial({color: 0x111111});
+                    const material_gold = new THREE.MeshPhongMaterial({color: 0xFFD700});
+
+                    var bottomGeo = new THREE.BoxGeometry(12, 20, 0.4);
+                    var coverGeo = new THREE.BoxGeometry(12, 17, 4);
+                    var connectorGeo = new THREE.BoxGeometry(4, 5, 3);
+                    var antennaGeo = new THREE.BoxGeometry(0.5, 5, 3);
+                    var blindGeo = new THREE.BoxGeometry(0.5, 5, 3);
+                    var ventGeo = new THREE.CylinderGeometry(1, 1, 0.5, 16);
+
+                    var bottom = new THREE.Mesh( bottomGeo, material_metal );
+                    bottom.position.set(0, 0, -2);
+                    group.add(bottom);
+
+                    var cover = new THREE.Mesh( coverGeo, material_cover );
+                    group.add(cover);
+
+                    var connector = new THREE.Mesh(connectorGeo, material_black);
+                    connector.position.set(-6-1, -5, 0);
+                    group.add(connector);
+
+                    var antenna = new THREE.Mesh(antennaGeo, material_gold);
+                    antenna.position.set(-6, 5, 0);
+                    group.add(antenna);
+
+                    var blind1 = new THREE.Mesh(blindGeo, material_black);
+                    blind1.position.set(6, 5, 0);
+                    group.add(blind1)
+
+                    var blind2 = new THREE.Mesh(blindGeo, material_black);
+                    blind2.position.set(6, -5, 0);
+                    group.add(blind2)
+
+                    var vent = new THREE.Mesh(ventGeo, material_black);
+                    vent.position.set(4, -8.5, 0);
+                    group.add(vent)
+
+                    scene.add(group); 
+                }
+/*
+                {
+                    const gltfLoader = new GLTFLoader();
+                    gltfLoader.load('https://threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', (gltf) => {
+                    const root = gltf.scene;
+                    scene.add(root);
+
+                    // compute the box that contains all the stuff
+                    // from root and below
+                    const box = new THREE.Box3().setFromObject(root);
+
+                    const boxSize = box.getSize(new THREE.Vector3()).length();
+                    const boxCenter = box.getCenter(new THREE.Vector3());
+
+                    // set the camera to frame the box
+                    frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
+
+                    // update the Trackball controls to handle the new size
+                    controls.maxDistance = boxSize * 10;
+                    controls.target.copy(boxCenter);
+                    controls.update();
+                    }
+                    );
+                }
+*/
+                {
+                    const color = 0xFFFFFF;
+                    const intensity = 1;
+                    const light = new THREE.AmbientLight(color, intensity);
+                    scene.add(light);
+                }
+                {
+                    const color = 0xFFFFFF;
+                    const intensity = 1;
+                    const light = new THREE.DirectionalLight(color, intensity);
+                    light.position.set(0, -10, -10);
+                    scene.add(light);
+                }
+
+                function render() {
+                    // group.rotation.z += 0.01;
+                    renderer.render(scene, camera);
+                    requestAnimationFrame(render);
+                }
+
+                requestAnimationFrame(render);
+            }
+
+            function pos1(obj) 
+            { 
+                var text = obj.target.innerHTML; 
+                // console.log(text);
+                var res = text.split(",");
+                // console.log(res);
+                setObject(parseInt(res[0]), parseInt(res[1]), parseInt(res[2])); 
+                // controls.reset();
+            }
+            
+            function setObject(x, y, z)
+            {
+                angles.innerHTML = `X: ${x}, Y: ${y}, Z: ${z}`;
+
+                // This is the magic in u-blox Euler transformation !!
+                group.rotation.order = "ZYX"
+                group.rotation.x = -y/180*Math.PI;      // X: Roll (-90..+90)
+                group.rotation.y = x/180*Math.PI;       // Y: Pitch (-180..+180)
+                group.rotation.z = z/180*Math.PI;       // Z: Yaw (0..360)
+            }
+
+            console.clear();
+
+            var i = 1;
+            do {
+                const id = `pos${i}`;
+                var obj = document.getElementById(id)
+                if (obj) {
+                    obj.addEventListener('click', pos1);
+                }
+                i += 1;
+            } while(obj);
+
+            main();
+		</script>
+	</body>
+</html>
