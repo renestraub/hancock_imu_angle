@@ -9,6 +9,8 @@ var slider_pitch = document.getElementById("slider_pitch")
 var slider_yaw = document.getElementById("slider_yaw")
 var value_roll = document.getElementById("value_roll")
 
+var controls = null;
+
 
 function main()
 {
@@ -24,9 +26,9 @@ function main()
     const camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 0.1, 3000 );
     camera.position.x = 0;
     camera.position.y = 0;
-    camera.position.z = 200;
+    camera.position.z = 100;
 
-    const controls = new OrbitControls(camera, canvas);
+    controls = new OrbitControls(camera, canvas);
     controls.target.set(0, 0, 0);
     controls.update();
 
@@ -43,16 +45,25 @@ function main()
         const color = 0xFFFFFF;
         const intensity = 2;
         const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(100, -50, 100);
+        light.position.set(100, -50, 1);
         scene.add(light);
+
+        const light2 = new THREE.DirectionalLight(color, intensity);
+        light2.position.set(-100, -50, 10);
+        scene.add(light2);
     }
 
+    const axis_len = 50;
+    const arrow_len = 2;
 
     {
         // X-Axis
         const points = [];
         points.push( new THREE.Vector3( 0, 0, 0 ) );
-        points.push( new THREE.Vector3( 100, 0, 0 ) );
+        points.push( new THREE.Vector3( axis_len, 0, 0 ) );
+        points.push( new THREE.Vector3( axis_len-arrow_len, arrow_len, 0 ) );
+        points.push( new THREE.Vector3( axis_len-arrow_len, -arrow_len, 0 ) );
+        points.push( new THREE.Vector3( axis_len, 0, 0 ) );
         const geometry = new THREE.BufferGeometry().setFromPoints( points );    
         const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
         const line = new THREE.Line( geometry, material );
@@ -62,7 +73,10 @@ function main()
         // Y-Axis
         const points = [];
         points.push( new THREE.Vector3( 0, 0, 0 ) );
-        points.push( new THREE.Vector3( 0, 100, 0 ) );
+        points.push( new THREE.Vector3( 0, axis_len, 0 ) );
+        points.push( new THREE.Vector3( 0, axis_len-arrow_len, -arrow_len ) );
+        points.push( new THREE.Vector3( 0, axis_len-arrow_len, arrow_len ) );
+        points.push( new THREE.Vector3( 0, axis_len, 0 ) );
         const geometry = new THREE.BufferGeometry().setFromPoints( points );    
         const material = new THREE.LineBasicMaterial( { color: 0x00ff00 } );
         const line = new THREE.Line( geometry, material );
@@ -72,7 +86,11 @@ function main()
         // Z-Axis
         const points = [];
         points.push( new THREE.Vector3( 0, 0, 0 ) );
-        points.push( new THREE.Vector3( 0, 0, 100 ) );
+        points.push( new THREE.Vector3( 0, 0, axis_len ) );
+        points.push( new THREE.Vector3( -arrow_len, 0, axis_len-arrow_len ) );
+        points.push( new THREE.Vector3( arrow_len, 0, axis_len-arrow_len ) );
+        points.push( new THREE.Vector3( 0, 0, axis_len ) );
+
         const geometry = new THREE.BufferGeometry().setFromPoints( points );    
         const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
         const line = new THREE.Line( geometry, material );
@@ -98,7 +116,7 @@ function main()
         const material_metal = new THREE.MeshPhongMaterial({color: 0x444444});
         const material_cover = new THREE.MeshPhongMaterial({color: 0x0022AA});
         const material_black = new THREE.MeshPhongMaterial({color: 0x111111});
-        const material_gold = new THREE.MeshPhongMaterial({color: 0xFFD700});
+        const material_gold = new THREE.MeshPhongMaterial({color: 0xddbb00});
 
         var bottomGeo = new THREE.BoxGeometry(12, 20, 0.4);
         var coverGeo = new THREE.BoxGeometry(12, 17, 4);
@@ -125,27 +143,27 @@ function main()
 
         var sma1 = new THREE.Mesh(smaGeo, material_gold);
         sma1.rotation.set(0,0,Math.PI/2)
-        sma1.position.set(-6, 6.5, -1);
+        sma1.position.set(-6, 6.5, -.8);
         group.add(sma1);
 
         var sma2 = new THREE.Mesh(smaGeo, material_gold);
         sma2.rotation.set(0,0,Math.PI/2)
-        sma2.position.set(-6, 5, -1);
+        sma2.position.set(-6, 5, -.8);
         group.add(sma2);
 
         var sma3 = new THREE.Mesh(smaGeo, material_gold);
         sma3.rotation.set(0,0,Math.PI/2)
-        sma3.position.set(-6, 3.5, -1);
+        sma3.position.set(-6, 3.5, -.8);
         group.add(sma3);
 
         var sma4 = new THREE.Mesh(smaGeo, material_gold);
         sma4.rotation.set(0,0,Math.PI/2)
-        sma4.position.set(-6, 5.75, 1);
+        sma4.position.set(-6, 5.75, .8);
         group.add(sma4);
 
         var sma5 = new THREE.Mesh(smaGeo, material_gold);
         sma5.rotation.set(0,0,Math.PI/2)
-        sma5.position.set(-6, 4.25, 1);
+        sma5.position.set(-6, 4.25, .8);
         group.add(sma5);
 
 
@@ -211,15 +229,10 @@ function setObject(x, y, z)
     group.rotation.z = z/180*Math.PI;       // Z: Yaw (0..360)
 }
 
-function yaw(obj)
-{
-    console.log("yaw");
-}
-
 
 console.clear();
 
-for (var i=1; i<32; i++) {
+for (var i=1; i<40; i++) {
     const id = `pos${i}`;
     var obj = document.getElementById(id)
     if (obj) {
@@ -228,19 +241,20 @@ for (var i=1; i<32; i++) {
 }
 
 slider_roll.oninput = function() {
-    console.log(this.value);
     value_roll.innerHTML = this.value;
     group.rotation.y = this.value/180*Math.PI;
 }
 slider_pitch.oninput = function() {
-    console.log(this.value);
     value_pitch.innerHTML = this.value;
     group.rotation.x = -this.value/180*Math.PI;
 }
 slider_yaw.oninput = function() {
-    console.log(this.value);
     value_yaw.innerHTML = this.value;
     group.rotation.z = this.value/180*Math.PI;
+}
+
+document.getElementById("view_reset").onclick = function() {
+    controls.reset();
 }
 
 main();
