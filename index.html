@@ -4,9 +4,6 @@
 		<meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="styles.css" />
 		<title>Hancock GNSS IMU Alignment</title>
-		<style>
-			// body { margin: 0; }
-		</style>
 	</head>
 	<body>
         <h1>Hancock GNSS IMU Alignment</h1>
@@ -14,273 +11,58 @@
         <table>
             <tr>
                 <td>Floor mount</td>
-                <td><button class="button button1" id="pos1">0,0,0</button> </td>
-                <td><button class="button button1" id="pos2">0,0,90</button> </td>
+                <td><button class="button button1" id="pos1">0,0,0</button></td>
+                <td><button class="button button1" id="pos2">0,0,90</button></td>
                 <td><button class="button button1" id="pos3">0,0,180</button></td> 
-                <td><button class="button button1" id="pos4">0,0,270</button> </td>
+                <td><button class="button button1" id="pos4">0,0,270</button></td>
 
                 <td>Head Over Mount</td>
-                <td><button class="button button_unconfirmed" id="pos14">-180,0,0</button> </td>
-                <td><button class="button button_unconfirmed" id="pos15">-180,0,90</button> </td>
-                <td><button class="button button_unconfirmed" id="pos16">-180,0,180</button> </td>
-                <td><button class="button button_unconfirmed" id="pos17">180,0,270</button> </td>
+                <td><button class="button button_unconfirmed" id="pos14">-180,0,0</button></td>
+                <td><button class="button button_unconfirmed" id="pos15">-180,0,90</button></td>
+                <td><button class="button button_unconfirmed" id="pos16">-180,0,180</button></td>
+                <td><button class="button button_unconfirmed" id="pos17">180,0,270</button></td>
             </tr>
 
             <tr>
                 <td>Front Wall</td>
-                <td><button class="button button1" id="pos5">-90,0,90</button> </td>
-                <td><button class="button button1" id="pos6">90,0,270</button> </td>
-                <td><button class="button button1" id="pos7">0,-90,0</button> </td>
-                <td><button class="button button_unconfirmed" id="pos18">0,90,180</button> </td>
+                <td><button class="button button1" id="pos5">-90,0,90</button></td>
+                <td><button class="button button1" id="pos6">90,0,270</button></td>
+                <td><button class="button button1" id="pos7">0,-90,0</button></td>
+                <td><button class="button button_unconfirmed" id="pos18">0,90,180</button></td>
             </tr>
 
             <tr>
                 <td>Left Side</td>
-                <td><button class="button button1" id="pos8">90,0,0</button> </td>
-                <td><button class="button button1" id="pos9">-90,0,180</button> </td>
-                <td><button class="button button_unconfirmed" id="pos10">0,-90,90</button> </td> 
+                <td><button class="button button1" id="pos8">90,0,0</button></td>
+                <td><button class="button button1" id="pos9">-90,0,180</button></td>
+                <td><button class="button button_unconfirmed" id="pos10">0,-90,90</button></td>
                 <td><button class="button button_unconfirmed" id="pos20">0,90,270</button></td>
 
                 <td>Right Side</td>
-                <td><button class="button button1" id="pos11">-90,0,0</button> </td>
-                <td><button class="button button1" id="pos12">90,0,180</button> </td>
-                <td><button class="button button_unconfirmed" id="pos21">0,0,0</button></td>
-                <td><button class="button button_unconfirmed" id="pos22">0,0,0</button></td>
+                <td><button class="button button1" id="pos11">-90,0,0</button></td>
+                <td><button class="button button1" id="pos12">90,0,180</button></td>
+                <td><button class="button button_unconfirmed" id="pos21">0,-90,270</button></td>
+                <td><button class="button button_unconfirmed" id="pos22">0,90,90</button></td>
             </tr>
         </table>
         <br>
 
         <div class="slidecontainer">
-            Roll: -180<input type="range" min="-180" max="180" value="0" class="slider" id="slider_roll">+180 <span id="value_roll">0</span>
-            Pitch: -90<input type="range" min="-90" max="90" value="0" class="slider" id="slider_pitch">+90 <span id="value_pitch">0</span>
-            Yaw:    0<input type="range" min="0" max="360" value="0" class="slider" id="slider_yaw">360 <span id="value_yaw">0</span>
+            Roll: -180<input type="range" min="-180" max="180" value="0" step="5" class="slider" id="slider_roll">+180
+            Pitch: -90<input type="range" min="-90" max="90" value="0" step="5" class="slider" id="slider_pitch">+90
+            Yaw:    0<input type="range" min="0" max="360" value="0" step="5" class="slider" id="slider_yaw">360
         </div>
 
-        <canvas id="c"></canvas>
+        <h2>
+            Roll: <span id="value_roll">0</span>°
+            Pitch: <span id="value_pitch">0</span>°
+            Yaw: <span id="value_yaw">0</span>°
+        </h2>
 
-        <script type="module">
-            // Find the latest version by visiting https://unpkg.com/three. The URL will
-            // redirect to the newest stable release.
-            import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-            import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/controls/OrbitControls.js';
-            import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/loaders/GLTFLoader.js';
+            <canvas id="c" width="1000" height="1000" style="border:1px solid #000000;"></canvas>
 
-            const group = new THREE.Group();
-            var slider_roll = document.getElementById("slider_roll")
-            var slider_pitch = document.getElementById("slider_pitch")
-            var slider_yaw = document.getElementById("slider_yaw")
-            var value_roll = document.getElementById("value_roll")
-
-            function main()
-            {
-                const canvas = document.querySelector('#c');
-                const renderer = new THREE.WebGLRenderer({canvas});
-                renderer.setClearColor(0xCCFFFF);
-                renderer.setSize( window.innerWidth, window.innerHeight );
-                renderer.setPixelRatio(window.devicePixelRatio);
-
-                const scene = new THREE.Scene();
-                scene.background = new THREE.Color(0xccccff);
-
-                const camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 0.1, 3000 );
-                // Camera above object
-                camera.position.x = 0;
-                camera.position.y = 0;
-                camera.position.z = 150;
-
-                const controls = new OrbitControls(camera, canvas);
-                controls.target.set(0, 0, 0);
-                controls.update();
-
-                {
-                    // Lights
-                    const color = 0xFFFFFF;
-                    const intensity = 1;
-                    const light = new THREE.AmbientLight(color, intensity);
-                    scene.add(light);
-                }
-
-                {
-                    // Lights
-                    const color = 0xFFFFFF;
-                    const intensity = 1;
-                    const light = new THREE.DirectionalLight(color, intensity);
-                    light.position.set(50, -50, 500);
-                    scene.add(light);
-                }
-
-
-                {
-                    // X-Axis
-                    const points = [];
-                    points.push( new THREE.Vector3( 0, 0, 0 ) );
-                    points.push( new THREE.Vector3( 100, 0, 0 ) );
-                    const geometry = new THREE.BufferGeometry().setFromPoints( points );    
-                    const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
-                    const line = new THREE.Line( geometry, material );
-                    scene.add( line );
-                }
-                {
-                    // Y-Axis
-                    const points = [];
-                    points.push( new THREE.Vector3( 0, 0, 0 ) );
-                    points.push( new THREE.Vector3( 0, 100, 0 ) );
-                    const geometry = new THREE.BufferGeometry().setFromPoints( points );    
-                    const material = new THREE.LineBasicMaterial( { color: 0x00ff00 } );
-                    const line = new THREE.Line( geometry, material );
-                    scene.add( line );
-                }
-                {
-                    // Z-Axis
-                    const points = [];
-                    points.push( new THREE.Vector3( 0, 0, 0 ) );
-                    points.push( new THREE.Vector3( 0, 0, 100 ) );
-                    const geometry = new THREE.BufferGeometry().setFromPoints( points );    
-                    const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
-                    const line = new THREE.Line( geometry, material );
-                    scene.add( line );
-                }
-
-                {
-                    // Car Image
-                    const planeSize = 40;
-
-                    const loader = new THREE.TextureLoader();
-                    const texture = loader.load('car_top.png');
-                    const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-                    const material = new THREE.MeshBasicMaterial( { map: texture, opacity: 0.5, transparent: true } );
-                    const mesh = new THREE.Mesh(planeGeo, material);
-                    mesh.position.z -= 12;
-                    mesh.scale.set(3, 3, 1);
-                    scene.add(mesh);
-                }
-
-                {
-                    // VCU Pro - Hand Made
-                    const material_metal = new THREE.MeshPhongMaterial({color: 0x444444});
-                    const material_cover = new THREE.MeshPhongMaterial({color: 0x0022AA});
-                    const material_black = new THREE.MeshPhongMaterial({color: 0x111111});
-                    const material_gold = new THREE.MeshPhongMaterial({color: 0xFFD700});
-
-                    var bottomGeo = new THREE.BoxGeometry(12, 20, 0.4);
-                    var coverGeo = new THREE.BoxGeometry(12, 17, 4);
-                    var connectorGeo = new THREE.BoxGeometry(4, 5, 3);
-                    var antennaGeo = new THREE.BoxGeometry(0.5, 5, 3);
-                    var blindGeo = new THREE.BoxGeometry(0.5, 5, 3);
-                    var ventGeo = new THREE.CylinderGeometry(1, 1, 0.5, 16);
-
-                    var bottom = new THREE.Mesh( bottomGeo, material_metal );
-                    bottom.position.set(0, 0, -2);
-                    group.add(bottom);
-
-                    var cover = new THREE.Mesh( coverGeo, material_cover );
-                    group.add(cover);
-
-                    var connector = new THREE.Mesh(connectorGeo, material_black);
-                    connector.position.set(-6-1, -5, 0);
-                    group.add(connector);
-
-                    var antenna = new THREE.Mesh(antennaGeo, material_gold);
-                    antenna.position.set(-6, 5, 0);
-                    group.add(antenna);
-
-                    var blind1 = new THREE.Mesh(blindGeo, material_black);
-                    blind1.position.set(6, 5, 0);
-                    group.add(blind1)
-
-                    var blind2 = new THREE.Mesh(blindGeo, material_black);
-                    blind2.position.set(6, -5, 0);
-                    group.add(blind2)
-
-                    var vent = new THREE.Mesh(ventGeo, material_black);
-                    vent.position.set(4, -8.5, 0);
-                    group.add(vent);
-
-                    scene.add(group); 
-                }
-/*
-                {
-                    const gltfLoader = new GLTFLoader();
-                    gltfLoader.load('NG800_web_3d_b.glb', (gltf) => {
-                        const root = gltf.scene;
-                        root.scale.set(250, 250, 250);
-                        root.rotation.set(90/180*Math.PI,0,0);
-                        root.position.set(9,-3,2.01);
-                        // scene.add(root);
-                        group.add(root);
-                        }
-                    );
-                }
-*/
-                function render() {
-                    // group.rotation.z += 0.01;
-                    renderer.render(scene, camera);
-                    requestAnimationFrame(render);
-                }
-
-                requestAnimationFrame(render);
-            }
-
-            function pos1(obj) 
-            { 
-                var text = obj.target.innerHTML; 
-                // console.log(text);
-                var res = text.split(",");
-                // console.log(res);
-                setObject(parseInt(res[0]), parseInt(res[1]), parseInt(res[2])); 
-                // controls.reset();
-            }
-            
-            function setObject(x, y, z)
-            {
-                // Update UI
-                slider_roll.value = x;
-                value_roll.innerHTML = x;
-                slider_pitch.value = y;
-                value_pitch.innerHTML = y;
-                slider_yaw.value = z;
-                value_yaw.innerHTML = z;
-
-                // This is the magic in u-blox Euler transformation !!
-                group.rotation.order = "ZYX"
-                group.rotation.x = -y/180*Math.PI;      // X: Roll (-90..+90)
-                group.rotation.y = x/180*Math.PI;       // Y: Pitch (-180..+180)
-                group.rotation.z = z/180*Math.PI;       // Z: Yaw (0..360)
-            }
-
-            function yaw(obj)
-            {
-                console.log("yaw");
-            }
-
-
-            console.clear();
-
-            for (var i=1; i<32; i++) {
-                const id = `pos${i}`;
-                var obj = document.getElementById(id)
-                if (obj) {
-                    obj.addEventListener('click', pos1);
-                }
-            }
-
-            slider_roll.oninput = function() {
-                console.log(this.value);
-                value_roll.innerHTML = this.value;
-                group.rotation.y = this.value/180*Math.PI;
-            }
-            slider_pitch.oninput = function() {
-                console.log(this.value);
-                value_pitch.innerHTML = this.value;
-                group.rotation.x = -this.value/180*Math.PI;
-            }
-            slider_yaw.oninput = function() {
-                console.log(this.value);
-                value_yaw.innerHTML = this.value;
-                group.rotation.z = this.value/180*Math.PI;
-            }
-
-            main();
+        <script type="module" src="code.js">
+            // main();
 		</script>
 	</body>
 </html>
