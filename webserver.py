@@ -1,8 +1,4 @@
-
-import subprocess
-import os
 import sys
-
 
 
 # https://github.com/Nakiami/MultithreadedSimpleHTTPServer/blob/master/MultithreadedSimpleHTTPServer.py
@@ -23,13 +19,11 @@ class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):
 
 
 def main():
-    # cwd = os.getcwd()
-    
     print("Starting HTTP Server on port 8888")
     server = ThreadingSimpleServer(('', 8888), SimpleHTTPRequestHandler)
     
     try:
-        while 1:
+        while True:
             sys.stdout.flush()
             server.handle_request()
     except KeyboardInterrupt:
