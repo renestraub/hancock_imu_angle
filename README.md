@@ -6,7 +6,7 @@ To execute locally run ```webserver.py``` with a Python3 interpreter. Then brows
 
 
 
-![Info](https://github.com/renestraub/hancock_imu_angle/raw/master/preview/screenshot1.png)
+![Info](https://raw.githubusercontent.com/renestraub/hancock_imu_angle/main/preview/screenshot1.png)
 
 
 ### Revision History

@@ -1,9 +1,33 @@
-body, h1, h2, h3, h4, h5, h6 {
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: Arial, Helvetica, Arial, sans-serif;
-  }
+}
+
+.footer2 {
+    position: fixed;
+    left: 0px;
+    bottom: 0;
+    z-index: 2;
+    width: 100%;
+    background-color: lightgray;
+    text-align: center;
+    font-size: 80%;
+}
+
+@media (prefers-color-scheme: dark) {
+    .footer {
+        background-color: #444;
+    }
+}
 
 .button {
-    background-color: #4CAF50; /* Green */
+    background-color: #4CAF50;
+    /* Green */
     border: none;
     color: white;
     padding: 6px 16px;
@@ -15,27 +39,28 @@ body, h1, h2, h3, h4, h5, h6 {
     transition-duration: 0.4s;
     cursor: pointer;
     width: 120px;
-  }
+}
 
 .button1 {
-    background-color: white; 
-    color: black; 
+    background-color: white;
+    color: black;
     border: 2px solid #4CAF50;
 }
 
 .button_unconfirmed {
-    background-color: white; 
-    color: black; 
+    background-color: white;
+    color: black;
     border: 2px solid orange;
     width: 100%;
 }
 
 .button:hover {
-    background-color: #4CAF50; /* Green */
+    background-color: #4CAF50;
+    /* Green */
     color: white;
 }
 
-  .slider {
+.slider {
     -webkit-appearance: none;
     width: 25%;
     height: 15px;
@@ -45,13 +70,13 @@ body, h1, h2, h3, h4, h5, h6 {
     opacity: 0.7;
     -webkit-transition: .2s;
     transition: opacity .2s;
-  }
-  
-  .slider:hover {
+}
+
+.slider:hover {
     opacity: 1;
-  }
-  
-  .slider::-webkit-slider-thumb {
+}
+
+.slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 25px;
@@ -59,12 +84,12 @@ body, h1, h2, h3, h4, h5, h6 {
     border-radius: 50%;
     background: #4CAF50;
     cursor: pointer;
-  }
-  
-  .slider::-moz-range-thumb {
+}
+
+.slider::-moz-range-thumb {
     width: 25px;
     height: 25px;
     border-radius: 50%;
     background: #4CAF50;
     cursor: pointer;
-  }
+}
