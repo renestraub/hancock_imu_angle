@@ -8,7 +8,6 @@ var slider_roll = document.getElementById("slider_roll")
 var slider_pitch = document.getElementById("slider_pitch")
 var slider_yaw = document.getElementById("slider_yaw")
 var value_roll = document.getElementById("value_roll")
-
 var controls = null;
 
 
@@ -26,9 +25,12 @@ function main() {
     camera.position.x = 0;
     camera.position.y = 0;
     camera.position.z = 100;
+    camera.up.set(0, 0, 1);
 
     controls = new OrbitControls(camera, canvas);
     controls.target.set(0, 0, 0);
+    controls.autoRotate = false;
+    controls.autoRotateSpeed = 5;
     controls.update();
 
     {
@@ -67,8 +69,7 @@ function main() {
         const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
         const line = new THREE.Line(geometry, material);
         scene.add(line);
-    }
-    {
+    } {
         // Y-Axis
         const points = [];
         points.push(new THREE.Vector3(0, 0, 0));
@@ -80,8 +81,7 @@ function main() {
         const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
         const line = new THREE.Line(geometry, material);
         scene.add(line);
-    }
-    {
+    } {
         // Z-Axis
         const points = [];
         points.push(new THREE.Vector3(0, 0, 0));
@@ -198,6 +198,7 @@ function main() {
     function render() {
         // group.rotation.z += 0.01;
         renderer.render(scene, camera);
+        controls.update();
         requestAnimationFrame(render);
     }
 
@@ -221,9 +222,9 @@ function setObject(x, y, z) {
 
     // This is the magic in u-blox Euler transformation !!
     group.rotation.order = "ZYX"
-    group.rotation.x = -y / 180 * Math.PI;      // X: Roll (-90..+90)
-    group.rotation.y = x / 180 * Math.PI;       // Y: Pitch (-180..+180)
-    group.rotation.z = z / 180 * Math.PI;       // Z: Yaw (0..360)
+    group.rotation.x = -y / 180 * Math.PI; // X: Roll (-90..+90)
+    group.rotation.y = x / 180 * Math.PI; // Y: Pitch (-180..+180)
+    group.rotation.z = z / 180 * Math.PI; // Z: Yaw (0..360)
 }
 
 
@@ -237,21 +238,29 @@ for (var i = 1; i < 40; i++) {
     }
 }
 
-slider_roll.oninput = function () {
+slider_roll.oninput = function() {
     value_roll.innerHTML = this.value;
     group.rotation.y = this.value / 180 * Math.PI;
 }
-slider_pitch.oninput = function () {
+slider_pitch.oninput = function() {
     value_pitch.innerHTML = this.value;
     group.rotation.x = -this.value / 180 * Math.PI;
 }
-slider_yaw.oninput = function () {
+slider_yaw.oninput = function() {
     value_yaw.innerHTML = this.value;
     group.rotation.z = this.value / 180 * Math.PI;
 }
 
-document.getElementById("view_reset").onclick = function () {
+document.getElementById("view_reset").onclick = function() {
     controls.reset();
+}
+
+document.getElementById("rotate_switch").onclick = function() {
+    if (controls.autoRotate) {
+        controls.autoRotate = false;
+    } else {
+        controls.autoRotate = true;
+    }
 }
 
 main();

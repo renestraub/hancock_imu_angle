@@ -59,10 +59,20 @@
         Roll: -180<input type="range" min="-180" max="180" value="0" step="5" class="slider" id="slider_roll">+180 Pitch: -90<input type="range" min="-90" max="90" value="0" step="5" class="slider" id="slider_pitch">+90 Yaw: 0<input type="range" min="0"
             max="360" value="0" step="5" class="slider" id="slider_yaw">360
     </div>
+    <!-- <div class="slidecontainer">
+        Roll: -180<input type="range" min="-180" max="180" value="0" step="5" class="slider" id="slider_roll">+180
+    </div>
+    <div class="slidecontainer">
+        Pitch: -90<input type="range" min="-90" max="90" value="0" step="5" class="slider" id="slider_pitch">+90
+    </div>
+    <div class="slidecontainer">
+        Yaw: 0<input type="range" min="0" max="360" value="0" step="5" class="slider" id="slider_yaw">360
+    </div> -->
 
     <h2>
         Roll: <span id="value_roll">0</span>° Pitch: <span id="value_pitch">0</span>° Yaw: <span id="value_yaw">0</span>°
         <td><button class="button button1" id="view_reset">Reset View</button></td>
+        <td><button class="button button1" id="rotate_switch">Autorotate</button></td>
     </h2>
 
     <canvas id="c" width="1000" height="1000" style="border:1px solid #000000;"></canvas>
