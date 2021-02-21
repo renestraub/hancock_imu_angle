@@ -1,9 +1,8 @@
 # Hancock IMU Alignment Tool
 
-Helps determining IMU angles for Hancock platform devices. Either select one of the presets or orient the device with roll, pitch. yaw controls until it matches your installation situation.
+Helps determining IMU angles for Hancock platform devices. Either select one of the presets or orient the device with roll, pitch, yaw controls until it matches your installation situation.
 
-To execute locally run ```webserver.py``` with a Python3 interpreter. Then browse to http://localhost:8888/.
-
+To execute locally run ```webserver.py``` with a Python interpreter. Then browse to http://localhost:8888/.
 
 
 ![Info](https://raw.githubusercontent.com/renestraub/hancock_imu_angle/main/preview/screenshot1.png)
@@ -11,6 +10,6 @@ To execute locally run ```webserver.py``` with a Python3 interpreter. Then brows
 
 ### Revision History
 
-#### v0.0.1 (20210220)
+#### v0.0.2 (20210221)
 
 - Initial release
