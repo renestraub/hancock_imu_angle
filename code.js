@@ -4,28 +4,34 @@ import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources
 
 
 const group = new THREE.Group();
+var controls = null;
+var camera = null;
+
 var slider_roll = document.getElementById("slider_roll")
 var slider_pitch = document.getElementById("slider_pitch")
 var slider_yaw = document.getElementById("slider_yaw")
 var value_roll = document.getElementById("value_roll")
-var controls = null;
+var value_pitch = document.getElementById("value_pitch")
+var value_yaw = document.getElementById("value_yaw")
+
+var autoRotate = false;
 
 
 function main() {
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({ canvas });
     renderer.setClearColor(0xCCFFFF);
-    renderer.setSize(window.innerWidth*.75, window.innerHeight*.75);
+    renderer.setSize(window.innerWidth*.65, window.innerHeight*.65);
     renderer.setPixelRatio(window.devicePixelRatio);
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xeeeeee);
 
-    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 3000);
+    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 3000);
     camera.position.x = 0;
     camera.position.y = 0;
     camera.position.z = 100;
-    camera.up.set(0, 0, 1);
+    camera.lookAt(scene.position);
 
     controls = new OrbitControls(camera, canvas);
     controls.target.set(0, 0, 0);
@@ -36,7 +42,7 @@ function main() {
     {
         // Lights
         const color = 0xFFFFFF;
-        const intensity = 1.0;
+        const intensity = 0.75;
         const light = new THREE.AmbientLight(color, intensity);
         scene.add(light);
     }
@@ -52,6 +58,12 @@ function main() {
         const light2 = new THREE.DirectionalLight(color, intensity);
         light2.position.set(-100, -50, 10);
         scene.add(light2);
+
+        const light3 = new THREE.SpotLight();
+        light3.position.set(-100, -50, 10);
+        light3.castShadow = true;
+        scene.add(light3);
+
     }
 
     const axis_len = 50;
@@ -197,9 +209,17 @@ function main() {
         }
     */
     function render() {
-        // group.rotation.z += 0.01;
         renderer.render(scene, camera);
-        controls.update();
+
+        if (autoRotate) {
+            const rotSpeed = 0.02;
+            var x = camera.position.x;
+            var y = camera.position.y;
+
+            camera.position.x = x * Math.cos(rotSpeed) + y * Math.sin(rotSpeed);
+            camera.position.y = y * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
+            camera.lookAt(scene.position);
+        }
         requestAnimationFrame(render);
     }
 
@@ -231,6 +251,7 @@ function setObject(x, y, z) {
 
 console.clear();
 
+// Register function handlers
 for (var i = 1; i < 40; i++) {
     const id = `pos${i}`;
     var obj = document.getElementById(id)
@@ -243,10 +264,12 @@ slider_roll.oninput = function() {
     value_roll.innerHTML = this.value;
     group.rotation.y = this.value / 180 * Math.PI;
 }
+
 slider_pitch.oninput = function() {
     value_pitch.innerHTML = this.value;
     group.rotation.x = -this.value / 180 * Math.PI;
 }
+
 slider_yaw.oninput = function() {
     value_yaw.innerHTML = this.value;
     group.rotation.z = this.value / 180 * Math.PI;
@@ -257,10 +280,13 @@ document.getElementById("view_reset").onclick = function() {
 }
 
 document.getElementById("rotate_switch").onclick = function() {
-    if (controls.autoRotate) {
-        controls.autoRotate = false;
+    console.log("test");
+    if (autoRotate) {
+        autoRotate = false;
     } else {
-        controls.autoRotate = true;
+        autoRotate = true;
+        camera.position.x = 100;
+        camera.position.y = 0;
     }
 }
 
