@@ -105,6 +105,7 @@ function main() {
         const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
         const material = new THREE.MeshBasicMaterial({ map: texture, opacity: 0.5, transparent: true });
         const mesh = new THREE.Mesh(planeGeo, material);
+        mesh.material.side = THREE.DoubleSide;
         mesh.position.z -= 12;
         mesh.scale.set(3, 3, 1);
         scene.add(mesh);
