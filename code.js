@@ -15,13 +15,13 @@ function main() {
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({ canvas });
     renderer.setClearColor(0xCCFFFF);
-    // renderer.setSize(canvas.innerWidth, canvas.innerHeight);
+    renderer.setSize(window.innerWidth*.75, window.innerHeight*.75);
     renderer.setPixelRatio(window.devicePixelRatio);
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xeeeeee);
 
-    const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 3000);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 3000);
     camera.position.x = 0;
     camera.position.y = 0;
     camera.position.z = 100;
