@@ -1,6 +1,6 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
 import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/controls/OrbitControls.js';
-// import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/loaders/GLTFLoader.js';
+import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/loaders/GLTFLoader.js';
 
 
 const group = new THREE.Group();
@@ -21,7 +21,7 @@ function main() {
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({ canvas });
     renderer.setClearColor(0xCCFFFF);
-    renderer.setSize(window.innerWidth*.65, window.innerHeight*.65);
+    renderer.setSize(window.innerWidth * .65, window.innerHeight * .65);
     renderer.setPixelRatio(window.devicePixelRatio);
 
     const scene = new THREE.Scene();
@@ -50,19 +50,30 @@ function main() {
     {
         // Lights
         const color = 0xFFFFFF;
-        const intensity = 2;
+        const intensity = 3;
+
         const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(100, -50, 1);
+        light.position.set(100, -100, 250);
         scene.add(light);
 
         const light2 = new THREE.DirectionalLight(color, intensity);
-        light2.position.set(-100, -50, 10);
+        light2.position.set(100, 100, 250);
         scene.add(light2);
 
-        const light3 = new THREE.SpotLight();
-        light3.position.set(-100, -50, 10);
+        const light3 = new THREE.DirectionalLight(color, intensity);
+        light3.position.set(-100, -100, 250);
         light3.castShadow = true;
         scene.add(light3);
+
+        const light4 = new THREE.DirectionalLight(color, intensity);
+        light4.position.set(-100, 100, 250);
+        light4.castShadow = true;
+        scene.add(light4);
+
+        // const light5 = new THREE.DirectionalLight(color, intensity);
+        // light5.position.set(0, 0, 1500);
+        // light5.castShadow = true;
+        // scene.add(light5);
 
     }
 
@@ -191,23 +202,19 @@ function main() {
         vent.position.set(4, -8.5, 0);
         group.add(vent);
 
-
-        scene.add(group);
+        // scene.add(group);
+    } {
+        const gltfLoader = new GLTFLoader();
+        gltfLoader.load('NG800_cardbox_gray_v1.glb', (gltf) => {
+            const root = gltf.scene;
+            root.scale.set(100, 100, 100);
+            root.rotation.set(90 / 180 * Math.PI, -Math.PI / 2, 0);
+            root.position.set(-3, 5, 0); //2.01);
+            // scene.add(root);
+            scene.add(root);
+        });
     }
-    /*
-        {
-            const gltfLoader = new GLTFLoader();
-            gltfLoader.load('NG800_web_3d_b.glb', (gltf) => {
-                const root = gltf.scene;
-                root.scale.set(250, 250, 250);
-                root.rotation.set(90/180*Math.PI,0,0);
-                root.position.set(9,-3,2.01);
-                // scene.add(root);
-                group.add(root);
-                }
-            );
-        }
-    */
+
     function render() {
         renderer.render(scene, camera);
 
