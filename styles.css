@@ -47,13 +47,21 @@ h6 {
     border: 2px solid #4CAF50;
 }
 
+.button_wide {
+    background-color: white;
+    color: black;
+    border: 2px solid #4CAF50;
+    width: 150px;
+}
+
 .button_unconfirmed {
     background-color: white;
     color: black;
     border: 2px solid orange;
 }
 
-.button1:hover {
+.button1:hover,
+.button_wide:hover {
     background-color: #4CAF50;
     /* Green */
     color: white;
@@ -65,7 +73,6 @@ h6 {
     /* Green */
     color: white;
 }
-
 
 .slider {
     -webkit-appearance: none;

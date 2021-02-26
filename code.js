@@ -3,7 +3,7 @@ import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources
 import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/loaders/GLTFLoader.js';
 
 
-const group = new THREE.Group();
+const device = new THREE.Group();
 var controls = null;
 var camera = null;
 
@@ -40,41 +40,39 @@ function main() {
     controls.update();
 
     {
-        // Lights
-        const color = 0xFFFFFF;
-        const intensity = 0.75;
+        // Ambient Light
+        const color = 0xffffff;
+        const intensity = 1;
         const light = new THREE.AmbientLight(color, intensity);
         scene.add(light);
     }
 
-    {
-        // Lights
+    if (1) {
+        // Spot/Directional Lights
         const color = 0xFFFFFF;
-        const intensity = 3;
+        const intensity = 1;
+        const distance = 1000;
+        const height = 100;
 
-        const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(100, -100, 250);
+        const light = new THREE.PointLight(color, intensity);
+        light.position.set(0, -distance, height);
         scene.add(light);
 
-        const light2 = new THREE.DirectionalLight(color, intensity);
-        light2.position.set(100, 100, 250);
+        const light2 = new THREE.PointLight(color, intensity);
+        light2.position.set(0, distance, height);
         scene.add(light2);
 
-        const light3 = new THREE.DirectionalLight(color, intensity);
-        light3.position.set(-100, -100, 250);
-        light3.castShadow = true;
+        const light3 = new THREE.PointLight(color, intensity);
+        light3.position.set(-distance, 0, height);
         scene.add(light3);
 
-        const light4 = new THREE.DirectionalLight(color, intensity);
-        light4.position.set(-100, 100, 250);
-        light4.castShadow = true;
+        const light4 = new THREE.PointLight(color, intensity);
+        light4.position.set(distance, 0, height);
         scene.add(light4);
 
-        // const light5 = new THREE.DirectionalLight(color, intensity);
-        // light5.position.set(0, 0, 1500);
-        // light5.castShadow = true;
-        // scene.add(light5);
-
+        const light6 = new THREE.PointLight(0xffffff, 2);
+        light6.position.set(10, 20, 750);
+        scene.add(light6);
     }
 
     const axis_len = 50;
@@ -134,7 +132,7 @@ function main() {
         scene.add(mesh);
     }
 
-    {
+    if (false) {
         // VCU Pro - Hand Made
         const material_metal = new THREE.MeshPhongMaterial({ color: 0x444444 });
         const material_cover = new THREE.MeshPhongMaterial({ color: 0x0022AA });
@@ -151,67 +149,72 @@ function main() {
 
         var bottom = new THREE.Mesh(bottomGeo, material_metal);
         bottom.position.set(0, 0, -2);
-        group.add(bottom);
+        device.add(bottom);
 
         var cover = new THREE.Mesh(coverGeo, material_cover);
-        group.add(cover);
+        device.add(cover);
 
         var connector = new THREE.Mesh(connectorGeo, material_black);
         connector.position.set(-6 - 1, -5, 0);
-        group.add(connector);
+        device.add(connector);
 
         var antenna = new THREE.Mesh(antennaGeo, material_black);
         antenna.position.set(-6, 5, 0);
-        group.add(antenna);
+        device.add(antenna);
 
         var sma1 = new THREE.Mesh(smaGeo, material_gold);
         sma1.rotation.set(0, 0, Math.PI / 2)
         sma1.position.set(-6, 6.5, -.8);
-        group.add(sma1);
+        device.add(sma1);
 
         var sma2 = new THREE.Mesh(smaGeo, material_gold);
         sma2.rotation.set(0, 0, Math.PI / 2)
         sma2.position.set(-6, 5, -.8);
-        group.add(sma2);
+        device.add(sma2);
 
         var sma3 = new THREE.Mesh(smaGeo, material_gold);
         sma3.rotation.set(0, 0, Math.PI / 2)
         sma3.position.set(-6, 3.5, -.8);
-        group.add(sma3);
+        device.add(sma3);
 
         var sma4 = new THREE.Mesh(smaGeo, material_gold);
         sma4.rotation.set(0, 0, Math.PI / 2)
         sma4.position.set(-6, 5.75, .8);
-        group.add(sma4);
+        device.add(sma4);
 
         var sma5 = new THREE.Mesh(smaGeo, material_gold);
         sma5.rotation.set(0, 0, Math.PI / 2)
         sma5.position.set(-6, 4.25, .8);
-        group.add(sma5);
+        device.add(sma5);
 
 
         var blind1 = new THREE.Mesh(blindGeo, material_black);
         blind1.position.set(6, 5, 0);
-        group.add(blind1)
+        device.add(blind1)
 
         var blind2 = new THREE.Mesh(blindGeo, material_black);
         blind2.position.set(6, -5, 0);
-        group.add(blind2)
+        device.add(blind2)
 
         var vent = new THREE.Mesh(ventGeo, material_black);
         vent.position.set(4, -8.5, 0);
-        group.add(vent);
+        device.add(vent);
 
-        // scene.add(group);
-    } {
+        scene.add(device);
+    }
+
+    {
         const gltfLoader = new GLTFLoader();
         gltfLoader.load('NG800_cardbox_gray_v1.glb', (gltf) => {
-            const root = gltf.scene;
-            root.scale.set(100, 100, 100);
-            root.rotation.set(90 / 180 * Math.PI, -Math.PI / 2, 0);
-            root.position.set(-3, 5, 0); //2.01);
-            // scene.add(root);
-            scene.add(root);
+            const scale = 250;
+            const obj = gltf.scene;
+            obj.scale.set(scale, scale, scale);
+            obj.rotation.set(90 / 180 * Math.PI, -Math.PI / 2, 0);
+            obj.position.set(-2.5 * scale / 100, 5.6 * scale / 100, 0);
+
+            device.add(obj);
+
+            scene.add(device);
         });
     }
 
@@ -219,7 +222,7 @@ function main() {
         renderer.render(scene, camera);
 
         if (autoRotate) {
-            const rotSpeed = 0.02;
+            const rotSpeed = 0.05;
             var x = camera.position.x;
             var y = camera.position.y;
 
@@ -249,10 +252,10 @@ function setObject(x, y, z) {
     value_yaw.innerHTML = z;
 
     // This is the magic in u-blox Euler transformation !!
-    group.rotation.order = "ZYX"
-    group.rotation.x = -y / 180 * Math.PI; // X: Roll (-90..+90)
-    group.rotation.y = x / 180 * Math.PI; // Y: Pitch (-180..+180)
-    group.rotation.z = z / 180 * Math.PI; // Z: Yaw (0..360)
+    device.rotation.order = "ZYX"
+    device.rotation.x = -y / 180 * Math.PI; // X: Roll (-90..+90)
+    device.rotation.y = x / 180 * Math.PI; // Y: Pitch (-180..+180)
+    device.rotation.z = z / 180 * Math.PI; // Z: Yaw (0..360)
 }
 
 
@@ -269,17 +272,17 @@ for (var i = 1; i < 40; i++) {
 
 slider_roll.oninput = function() {
     value_roll.innerHTML = this.value;
-    group.rotation.y = this.value / 180 * Math.PI;
+    device.rotation.y = this.value / 180 * Math.PI;
 }
 
 slider_pitch.oninput = function() {
     value_pitch.innerHTML = this.value;
-    group.rotation.x = -this.value / 180 * Math.PI;
+    device.rotation.x = -this.value / 180 * Math.PI;
 }
 
 slider_yaw.oninput = function() {
     value_yaw.innerHTML = this.value;
-    group.rotation.z = this.value / 180 * Math.PI;
+    device.rotation.z = this.value / 180 * Math.PI;
 }
 
 document.getElementById("view_reset").onclick = function() {
@@ -290,10 +293,12 @@ document.getElementById("rotate_switch").onclick = function() {
     console.log("test");
     if (autoRotate) {
         autoRotate = false;
+        this.innerHTML = 'Start Autorotate'
     } else {
         autoRotate = true;
-        camera.position.x = 100;
+        camera.position.x = 20;
         camera.position.y = 0;
+        this.innerHTML = 'Stop Autorotate'
     }
 }
 
