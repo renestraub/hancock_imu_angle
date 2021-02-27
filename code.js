@@ -42,7 +42,7 @@ function main() {
     {
         // Ambient Light
         const color = 0xffffff;
-        const intensity = 0.5;
+        const intensity = 0.6;
         const light = new THREE.AmbientLight(color, intensity);
         scene.add(light);
     }
@@ -50,7 +50,7 @@ function main() {
     if (1) {
         // Spot/Directional Lights
         const color = 0xFFFFFF;
-        const intensity = 0.1;
+        const intensity = 0.7;
         const distance = 1000;
         const height = 100;
 
@@ -71,7 +71,7 @@ function main() {
         scene.add(light4);
 
         const light6 = new THREE.PointLight(0xffffff, intensity);
-        light6.position.set(100, -200, 750);
+        light6.position.set(200, -300, 1750);
         scene.add(light6);
     }
 
