@@ -19,7 +19,7 @@ var autoRotate = false;
 
 function main() {
     const canvas = document.querySelector('#c');
-    const renderer = new THREE.WebGLRenderer({ canvas });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setClearColor(0xCCFFFF);
     renderer.setSize(window.innerWidth * .65, window.innerHeight * .65);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -42,7 +42,7 @@ function main() {
     {
         // Ambient Light
         const color = 0xffffff;
-        const intensity = 1;
+        const intensity = 0.5;
         const light = new THREE.AmbientLight(color, intensity);
         scene.add(light);
     }
@@ -50,7 +50,7 @@ function main() {
     if (1) {
         // Spot/Directional Lights
         const color = 0xFFFFFF;
-        const intensity = 1;
+        const intensity = 0.1;
         const distance = 1000;
         const height = 100;
 
@@ -70,8 +70,8 @@ function main() {
         light4.position.set(distance, 0, height);
         scene.add(light4);
 
-        const light6 = new THREE.PointLight(0xffffff, 2);
-        light6.position.set(10, 20, 750);
+        const light6 = new THREE.PointLight(0xffffff, intensity);
+        light6.position.set(100, -200, 750);
         scene.add(light6);
     }
 
@@ -211,6 +211,11 @@ function main() {
             obj.scale.set(scale, scale, scale);
             obj.rotation.set(90 / 180 * Math.PI, -Math.PI / 2, 0);
             obj.position.set(-2.5 * scale / 100, 5.6 * scale / 100, 0);
+
+            // Remove metal surface so that ambient light can work
+            obj.traverse(child => {
+                if (child.material) child.material.metalness = 0;
+            });
 
             device.add(obj);
 
