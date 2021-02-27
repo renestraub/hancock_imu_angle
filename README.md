@@ -10,6 +10,11 @@ To execute locally run ```webserver.py``` with a Python interpreter. Then browse
 
 ### Revision History
 
+#### v0.0.3 (20210227)
+
+- Update with CAD model of Hancock enclosure
+- Confirm additional IMU angles
+
 #### v0.0.2 (20210221)
 
 - Initial release
