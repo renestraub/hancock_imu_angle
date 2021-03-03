@@ -122,7 +122,7 @@ function main() {
         const planeSize = 40;
 
         const loader = new THREE.TextureLoader();
-        const texture = loader.load('car_top.png');
+        const texture = loader.load('car2_top.png');
         const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
         const material = new THREE.MeshBasicMaterial({ map: texture, opacity: 0.5, transparent: true });
         const mesh = new THREE.Mesh(planeGeo, material);
