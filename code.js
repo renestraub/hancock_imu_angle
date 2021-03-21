@@ -17,6 +17,7 @@ var value_yaw = document.getElementById("value_yaw")
 var autoRotate = false;
 
 
+
 function main() {
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -39,6 +40,11 @@ function main() {
     controls.autoRotateSpeed = 5;
     controls.update();
 
+    // Three-JS Axes
+    const axesHelper = new THREE.AxesHelper(100);
+    axesHelper.rotation.set(0, 0, deg2rad(90));
+    scene.add(axesHelper);
+
     {
         // Ambient Light
         const color = 0xffffff;
@@ -47,7 +53,7 @@ function main() {
         scene.add(light);
     }
 
-    if (1) {
+    {
         // Spot/Directional Lights
         const color = 0xFFFFFF;
         const intensity = 0.7;
@@ -75,46 +81,18 @@ function main() {
         scene.add(light6);
     }
 
-    const axis_len = 50;
-    const arrow_len = 2;
-
     {
-        // X-Axis
-        const points = [];
-        points.push(new THREE.Vector3(0, 0, 0));
-        points.push(new THREE.Vector3(axis_len, 0, 0));
-        points.push(new THREE.Vector3(axis_len - arrow_len, arrow_len, 0));
-        points.push(new THREE.Vector3(axis_len - arrow_len, -arrow_len, 0));
-        points.push(new THREE.Vector3(axis_len, 0, 0));
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-        const line = new THREE.Line(geometry, material);
-        scene.add(line);
-    } {
-        // Y-Axis
-        const points = [];
-        points.push(new THREE.Vector3(0, 0, 0));
-        points.push(new THREE.Vector3(0, axis_len, 0));
-        points.push(new THREE.Vector3(0, axis_len - arrow_len, -arrow_len));
-        points.push(new THREE.Vector3(0, axis_len - arrow_len, arrow_len));
-        points.push(new THREE.Vector3(0, axis_len, 0));
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
-        const line = new THREE.Line(geometry, material);
-        scene.add(line);
-    } {
-        // Z-Axis
-        const points = [];
-        points.push(new THREE.Vector3(0, 0, 0));
-        points.push(new THREE.Vector3(0, 0, axis_len));
-        points.push(new THREE.Vector3(-arrow_len, 0, axis_len - arrow_len));
-        points.push(new THREE.Vector3(arrow_len, 0, axis_len - arrow_len));
-        points.push(new THREE.Vector3(0, 0, axis_len));
+        const arrow_x = arrow(0xff0000);
+        arrow_x.rotation.set(0, 0, 0);
+        scene.add(arrow_x);
 
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-        const line = new THREE.Line(geometry, material);
-        scene.add(line);
+        const arrow_y = arrow(0x00ff00);
+        arrow_y.rotation.set(0, 0, deg2rad(90));
+        scene.add(arrow_y);
+
+        const arrow_z = arrow(0x00ff);
+        arrow_z.rotation.set(deg2rad(90), 0, 0, 0);
+        scene.add(arrow_z);
     }
 
     {
@@ -191,6 +169,34 @@ function setObject(x, y, z) {
     device.rotation.y = x / 180 * Math.PI; // Y: Pitch (-180..+180)
     device.rotation.z = z / 180 * Math.PI; // Z: Yaw (0..360)
 }
+
+
+function arrow(color) {
+    // Create an axis arrow in the specified color
+    const axis_len = 50;
+    const arrow_len = 3;
+    const axis_dia = 0.2;
+
+    const arrow = new THREE.Group();
+    const material = new THREE.MeshBasicMaterial({ color: color });
+
+    const geometryLine = new THREE.CylinderGeometry(axis_dia, axis_dia, axis_len, 32);
+    const meshLine = new THREE.Mesh(geometryLine, material);
+    meshLine.position.y = axis_len / 2;
+    arrow.add(meshLine);
+
+    const geometryArrow = new THREE.CylinderGeometry(0, 5 * axis_dia, arrow_len, 32);
+    const meshArrow = new THREE.Mesh(geometryArrow, material);
+    meshArrow.position.y = axis_len;
+    arrow.add(meshArrow);
+
+    return arrow;
+}
+
+function deg2rad(angle) {
+    return angle * Math.PI / 180.0;
+}
+
 
 
 console.clear();
