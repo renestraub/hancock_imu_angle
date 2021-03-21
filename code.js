@@ -17,16 +17,16 @@ var value_yaw = document.getElementById("value_yaw")
 var autoRotate = false;
 
 
-
 function main() {
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setClearColor(0xCCFFFF);
+    // renderer.setClearColor(0xCCFFFF);
     renderer.setSize(window.innerWidth * .65, window.innerHeight * .65);
     renderer.setPixelRatio(window.devicePixelRatio);
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xeeeeee);
+    scene.rotation.set(0, 0, deg2rad(180));
 
     camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 3000);
     camera.position.x = 0;
@@ -40,11 +40,30 @@ function main() {
     controls.autoRotateSpeed = 5;
     controls.update();
 
-    // Three-JS Axes
-    const axesHelper = new THREE.AxesHelper(100);
-    axesHelper.rotation.set(0, 0, deg2rad(90));
-    scene.add(axesHelper);
+    lights(scene);
+    axes(scene);
+    car_image(scene);
+    hancock_box(scene);
 
+    function render() {
+        renderer.render(scene, camera);
+
+        if (autoRotate) {
+            const rotSpeed = 0.05;
+            var x = camera.position.x;
+            var y = camera.position.y;
+
+            camera.position.x = x * Math.cos(rotSpeed) + y * Math.sin(rotSpeed);
+            camera.position.y = y * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
+            camera.lookAt(scene.position);
+        }
+        requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+}
+
+function lights(scene) {
     {
         // Ambient Light
         const color = 0xffffff;
@@ -80,100 +99,81 @@ function main() {
         light6.position.set(200, -300, 1750);
         scene.add(light6);
     }
+}
 
-    {
-        const arrow_x = arrow(0xff0000);
-        arrow_x.rotation.set(0, 0, 0);
-        scene.add(arrow_x);
+function car_image(scene) {
+    // Car Image as xy-plane
+    const planeSize = 40;
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load('car2_top.png');
+    const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
+    const material = new THREE.MeshBasicMaterial({ map: texture, opacity: 0.5, transparent: true });
+    const mesh = new THREE.Mesh(planeGeo, material);
+    mesh.material.side = THREE.DoubleSide;
+    mesh.position.z -= 12;
+    mesh.scale.set(3, 3, 1);
+    mesh.rotation.set(0, 0, deg2rad(-90));
+    scene.add(mesh);
+}
 
-        const arrow_y = arrow(0x00ff00);
-        arrow_y.rotation.set(0, 0, deg2rad(90));
-        scene.add(arrow_y);
+function hancock_box(scene) {
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('NG800_cardbox_gray_v1.glb', (gltf) => {
+        const scale = 250;
+        const obj = gltf.scene;
 
-        const arrow_z = arrow(0x00ff);
-        arrow_z.rotation.set(deg2rad(90), 0, 0, 0);
-        scene.add(arrow_z);
-    }
+        console.log(obj.rotation.order);
+        obj.scale.set(scale, scale, scale);
+        obj.rotation.set(deg2rad(90), deg2rad(-180), deg2rad(0));
+        obj.position.set(5.6 * scale / 100, 2.5 * scale / 100, 0);
 
-    {
-        // Car Image as xy-plane
-        const planeSize = 40;
-
-        const loader = new THREE.TextureLoader();
-        const texture = loader.load('car2_top.png');
-        const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-        const material = new THREE.MeshBasicMaterial({ map: texture, opacity: 0.5, transparent: true });
-        const mesh = new THREE.Mesh(planeGeo, material);
-        mesh.material.side = THREE.DoubleSide;
-        mesh.position.z -= 12;
-        mesh.scale.set(3, 3, 1);
-        scene.add(mesh);
-    }
-
-    {
-        const gltfLoader = new GLTFLoader();
-        gltfLoader.load('NG800_cardbox_gray_v1.glb', (gltf) => {
-            const scale = 250;
-            const obj = gltf.scene;
-            obj.scale.set(scale, scale, scale);
-            obj.rotation.set(90 / 180 * Math.PI, -Math.PI / 2, 0);
-            obj.position.set(-2.5 * scale / 100, 5.6 * scale / 100, 0);
-
-            // Remove metal surface so that ambient light can work
-            obj.traverse(child => {
-                if (child.material) child.material.metalness = 0;
-            });
-
-            device.add(obj);
-
-            scene.add(device);
+        // Remove metal surface so that ambient light can work
+        obj.traverse(child => {
+            if (child.material) child.material.metalness = 0;
         });
-    }
 
-    function render() {
-        renderer.render(scene, camera);
+        device.add(obj);
 
-        if (autoRotate) {
-            const rotSpeed = 0.05;
-            var x = camera.position.x;
-            var y = camera.position.y;
+        const arrow_x = arrow(0xaa0000, 10);
+        arrow_x.rotation.set(0, 0, deg2rad(-90));
+        arrow_x.position.z = 10;
+        device.add(arrow_x);
 
-            camera.position.x = x * Math.cos(rotSpeed) + y * Math.sin(rotSpeed);
-            camera.position.y = y * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
-            camera.lookAt(scene.position);
-        }
-        requestAnimationFrame(render);
-    }
+        const arrow_y = arrow(0x00aa00, 10);
+        arrow_y.rotation.set(0, 0, deg2rad(0));
+        arrow_y.position.z = 10;
+        device.add(arrow_y);
 
-    requestAnimationFrame(render);
+        const arrow_z = arrow(0x0000aa, 10);
+        arrow_z.rotation.set(deg2rad(90), 0, 0, 0);
+        arrow_z.position.z = 10;
+        device.add(arrow_z);
+
+        scene.add(device);
+    });
 }
 
-function setPos(obj) {
-    var text = obj.target.innerHTML;
-    var res = text.split(",");
-    setObject(parseInt(res[0]), parseInt(res[1]), parseInt(res[2]));
+function axes(scene) {
+    // Three-JS Axes
+    const axesHelper = new THREE.AxesHelper(100);
+    // scene.add(axesHelper);
+
+    const arrow_x = arrow(0xee0000, 65);
+    arrow_x.rotation.set(0, 0, deg2rad(-90));
+    scene.add(arrow_x);
+
+    const arrow_y = arrow(0x00ee00, 40);
+    arrow_y.rotation.set(0, 0, deg2rad(0));
+    scene.add(arrow_y);
+
+    const arrow_z = arrow(0x0000ee, 30);
+    arrow_z.rotation.set(deg2rad(90), 0, 0, 0);
+    scene.add(arrow_z);
 }
 
-function setObject(x, y, z) {
-    // Update UI
-    slider_roll.value = x;
-    value_roll.innerHTML = x;
-    slider_pitch.value = y;
-    value_pitch.innerHTML = y;
-    slider_yaw.value = z;
-    value_yaw.innerHTML = z;
-
-    // This is the magic in u-blox Euler transformation !!
-    device.rotation.order = "ZYX"
-    device.rotation.x = -y / 180 * Math.PI; // X: Roll (-90..+90)
-    device.rotation.y = x / 180 * Math.PI; // Y: Pitch (-180..+180)
-    device.rotation.z = z / 180 * Math.PI; // Z: Yaw (0..360)
-}
-
-
-function arrow(color) {
+function arrow(color, axis_len) {
     // Create an axis arrow in the specified color
-    const axis_len = 50;
+    // const axis_len = 50;
     const arrow_len = 3;
     const axis_dia = 0.2;
 
@@ -185,7 +185,7 @@ function arrow(color) {
     meshLine.position.y = axis_len / 2;
     arrow.add(meshLine);
 
-    const geometryArrow = new THREE.CylinderGeometry(0, 5 * axis_dia, arrow_len, 32);
+    const geometryArrow = new THREE.CylinderGeometry(0.25, 5 * axis_dia, arrow_len, 32);
     const meshArrow = new THREE.Mesh(geometryArrow, material);
     meshArrow.position.y = axis_len;
     arrow.add(meshArrow);
@@ -198,11 +198,10 @@ function deg2rad(angle) {
 }
 
 
-
 console.clear();
 
-// Register function handlers
-for (var i = 1; i < 40; i++) {
+// Register function handlers to preset button
+for (var i = 1; i < 99; i++) {
     const id = `pos${i}`;
     var obj = document.getElementById(id)
     if (obj) {
@@ -210,19 +209,17 @@ for (var i = 1; i < 40; i++) {
     }
 }
 
+// Register function handlers for sliders
 slider_roll.oninput = function() {
-    value_roll.innerHTML = this.value;
-    device.rotation.y = this.value / 180 * Math.PI;
+    setObject("x", this.value, device.rotation.y, device.rotation.z);
 }
 
 slider_pitch.oninput = function() {
-    value_pitch.innerHTML = this.value;
-    device.rotation.x = -this.value / 180 * Math.PI;
+    setObject("y", device.rotation.x, this.value, device.rotation.z);
 }
 
 slider_yaw.oninput = function() {
-    value_yaw.innerHTML = this.value;
-    device.rotation.z = this.value / 180 * Math.PI;
+    setObject("z", device.rotation.x, device.rotation.y, this.value);
 }
 
 document.getElementById("view_reset").onclick = function() {
@@ -239,6 +236,36 @@ document.getElementById("rotate_switch").onclick = function() {
         camera.position.x = 20;
         camera.position.y = 0;
         this.innerHTML = 'Stop Autorotate'
+    }
+}
+
+function setPos(obj) {
+    var text = obj.target.innerHTML;
+    var res = text.split(",");
+    setObject("xyz", parseInt(res[0]), parseInt(res[1]), parseInt(res[2]));
+}
+
+function setObject(mode, roll, pitch, yaw) {
+    // This is the magic in u-blox Euler transformation !!
+    device.rotation.order = "ZYX";
+
+    // Update UI
+    if (mode == "xyz" || mode == "x") {
+        slider_roll.value = roll;
+        value_roll.innerHTML = roll;
+        device.rotation.x = deg2rad(roll); // X: Roll (-180..+180)
+    }
+
+    if (mode == "xyz" || mode == "y") {
+        slider_pitch.value = pitch;
+        value_pitch.innerHTML = pitch;
+        device.rotation.y = deg2rad(pitch); // Y: Pitch (-90..+90)
+    }
+
+    if (mode == "xyz" || mode == "z") {
+        slider_yaw.value = yaw;
+        value_yaw.innerHTML = yaw;
+        device.rotation.z = deg2rad(yaw); // Z: Yaw (0..360)
     }
 }
 
