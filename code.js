@@ -242,7 +242,7 @@ document.getElementById("rotate_switch").onclick = function() {
 function setPos(obj) {
     var text = obj.target.innerHTML;
     var res = text.split(",");
-    setObject("xyz", parseInt(res[0]), parseInt(res[1]), parseInt(res[2]));
+    setObject("xyz", parseInt(res[2]), parseInt(res[1]), parseInt(res[0]));
 }
 
 function setObject(mode, roll, pitch, yaw) {
