@@ -18,26 +18,27 @@ var autoRotate = false;
 
 
 function main() {
+    // get size of container holding canvas
+    const container = document.querySelector('#container');
+    const width = container.clientWidth;
+
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    // renderer.setClearColor(0xCCFFFF);
-    renderer.setSize(window.innerWidth * .65, window.innerHeight * .65);
+    renderer.setSize(width, width);
     renderer.setPixelRatio(window.devicePixelRatio);
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xeeeeee);
-    scene.rotation.set(0, 0, deg2rad(180));
+    scene.rotation.set(0, 0, deg2rad(180)); // Make car look to the left (x-axis)
 
     camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 3000);
     camera.position.x = 0;
     camera.position.y = 0;
-    camera.position.z = 100;
+    camera.position.z = 150;
     camera.lookAt(scene.position);
 
     controls = new OrbitControls(camera, canvas);
     controls.target.set(0, 0, 0);
-    controls.autoRotate = false;
-    controls.autoRotateSpeed = 5;
     controls.update();
 
     lights(scene);
@@ -117,12 +118,12 @@ function car_image(scene) {
 }
 
 function hancock_box(scene) {
+    // Hancock Enclosure
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('NG800_cardbox_gray_v1.glb', (gltf) => {
         const scale = 250;
         const obj = gltf.scene;
 
-        console.log(obj.rotation.order);
         obj.scale.set(scale, scale, scale);
         obj.rotation.set(deg2rad(90), deg2rad(-180), deg2rad(0));
         obj.position.set(5.6 * scale / 100, 2.5 * scale / 100, 0);
@@ -134,6 +135,7 @@ function hancock_box(scene) {
 
         device.add(obj);
 
+        // Axis of enclosure
         const arrow_x = arrow(0xaa0000, 10);
         arrow_x.rotation.set(0, 0, deg2rad(-90));
         arrow_x.position.z = 10;
@@ -154,10 +156,7 @@ function hancock_box(scene) {
 }
 
 function axes(scene) {
-    // Three-JS Axes
-    const axesHelper = new THREE.AxesHelper(100);
-    // scene.add(axesHelper);
-
+    // View Axes
     const arrow_x = arrow(0xee0000, 65);
     arrow_x.rotation.set(0, 0, deg2rad(-90));
     scene.add(arrow_x);

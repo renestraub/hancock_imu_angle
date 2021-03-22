@@ -8,9 +8,9 @@
 </head>
 
 <body>
-    <h1>Hancock GNSS IMU Alignment</h1>
+    <h2>Hancock GNSS IMU Alignment</h2>
 
-    <table>
+    <table style="width:960px">
         <tr>
             <td>Floor mount</td>
             <td><button class="button button1" id="pos1">0,0,0</button></td>
@@ -55,7 +55,7 @@
     </table>
     <br>
 
-    <table style="width:1000px">
+    <table style="width:960px">
         <tr>
             <td>Yaw</td>
             <td style="text-align:right">0°</td>
@@ -76,27 +76,27 @@
         </tr>
     </table>
 
-    <h3>
-        <button class="button button_wide" id="view_reset">Reset View</button>
-        <button class="button button_wide" id="rotate_switch">Start Autorotate</button> Yaw: <span id="value_yaw">0</span>° Pitch: <span id="value_pitch">0</span>° Roll: <span id="value_roll">0</span>°
-    </h3>
+    <button class="button button_wide" id="view_reset">Reset View</button>
+    <button class="button button_wide" id="rotate_switch">Start Autorotate</button>
 
-    <canvas id="c" width="1000" height="800" style="border:1px solid #222222;"></canvas>
-
-    <div>
-        Coordinate System: X (Red), Y (Green), Z (Blue)</br>
-        Rotation Order: Yaw (Z), Pitch (Y), Roll (X)</br>
-        </br>
-        </br>
+    <div id="container">
+        <canvas id="c"></canvas>
+        <div id="overlay1">
+            Yaw: <span id="value_yaw">0</span>° Pitch: <span id="value_pitch">0</span>° Roll: <span id="value_roll">0</span>°
+        </div>
+        <div id="overlay2">
+            Coordinate System: X (Red), Y (Green), Z (Blue)</br>
+            Rotation Order: Yaw (Z), Pitch (Y), Roll (X)
+        </div>
     </div>
 
-    <div class="footer2">
+    <div class="footer2 ">
         <p>
-            Version: v0.0.3 - Disclaimer: This tool is a private project, not affiliated with NetModule AG. The project is provided under the MIT license.
+            Version: v0.1.0 - Disclaimer: This tool is a private project, not affiliated with NetModule AG. The project is provided under the MIT license.
         </p>
     </div>
 
-    <script type="module" src="code.js"></script>
+    <script type="module " src="code.js "></script>
 </body>
 
 </html>
