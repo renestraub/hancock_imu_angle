@@ -18,7 +18,7 @@
             <td><button class="button button1" id="pos3">180,0,0</button></td>
             <td><button class="button button1" id="pos4">270,0,0</button></td>
 
-            <td>Head Over</td>
+            <td style="text-align:right">Head Over</td>
             <td><button class="button button_unconfirmed" id="pos14">0,0,180</button></td>
             <td><button class="button button1" id="pos15">90,0,180</button></td>
             <td><button class="button button1" id="pos16">180,0,180</button></td>
@@ -32,7 +32,7 @@
             <td><button class="button button1" id="pos7">0,-90,0</button></td>
             <td><button class="button button_unconfirmed" id="pos18">180,90,0</button></td>
 
-            <td>Rear Wall</td>
+            <td style="text-align:right">Rear Wall</td>
             <td><button class="button button_unconfirmed" id="pos30">270,0,-90</button></td>
             <td><button class="button button_unconfirmed" id="pos31">90,0,90</button></td>
             <td><button class="button button_unconfirmed" id="pos32">0,90,0</button></td>
@@ -48,7 +48,7 @@
             <!-- 180, 90, -70 -->
             <td><button class="button button1" id="pos20">270,90,0</button></td>
 
-            <td>Right Side</td>
+            <td style="text-align:right">Right Side</td>
             <td><button class="button button1" id="pos11">0,0,-90</button></td>
             <td><button class="button button1" id="pos12">180,0,90</button></td>
             <td><button class="button button1" id="pos21">270,-90,0</button></td>
@@ -80,12 +80,15 @@
     </table>
 
     <button class="button button_wide" id="view_reset">Reset View</button>
-    <button class="button button_wide" id="rotate_switch">Start Autorotate</button>
+    <button class="button button_wide" id="view_rotate">Rotate View</button>
+    <button class="button button_wide" id="rotate_switch">Start Animation</button>
 
     <div id="container">
-        <canvas id="c"></canvas>
+        <canvas id="canvas"></canvas>
         <div id="overlay1">
-            Yaw: <span id="value_yaw">0</span>° Pitch: <span id="value_pitch">0</span>° Roll: <span id="value_roll">0</span>°
+            Yaw: <span id="value_yaw">0</span>°</br>
+            Pitch: <span id="value_pitch">0</span>°</br>
+            Roll: <span id="value_roll">0</span>°
         </div>
         <div id="overlay2">
             Coordinate System: X (Red), Y (Green), Z (Blue)</br>
@@ -95,7 +98,7 @@
 
     <div class="footer2 ">
         <p>
-            Version: v0.1.0 - Disclaimer: This tool is a private project, not affiliated with NetModule AG. The project is provided under the MIT license.
+            Version: v0.1.1 - Disclaimer: This tool is a private project, not affiliated with NetModule AG. The project is provided under the MIT license.
         </p>
     </div>
 

@@ -7,6 +7,7 @@ import * as THREE from './node_modules/three/build/three.module.js';
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 
+const scene = new THREE.Scene();
 const device = new THREE.Group();
 var controls = null;
 var camera = null;
@@ -19,6 +20,7 @@ var value_pitch = document.getElementById("value_pitch")
 var value_yaw = document.getElementById("value_yaw")
 
 var autoRotate = false;
+var scene_rot = 180; // Make car look to the left (x-axis)
 
 
 function main() {
@@ -26,14 +28,13 @@ function main() {
     const container = document.querySelector('#container');
     const width = container.clientWidth;
 
-    const canvas = document.querySelector('#c');
+    const canvas = document.querySelector('#canvas');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(width, width);
     renderer.setPixelRatio(window.devicePixelRatio);
 
-    const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xeeeeee);
-    scene.rotation.set(0, 0, deg2rad(180)); // Make car look to the left (x-axis)
+    scene.rotation.set(0, 0, deg2rad(scene_rot));
 
     camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 3000);
     camera.position.x = 0;
@@ -229,16 +230,21 @@ document.getElementById("view_reset").onclick = function() {
     controls.reset();
 }
 
+document.getElementById("view_rotate").onclick = function() {
+    scene_rot -= 45;
+    scene.rotation.set(0, 0, deg2rad(scene_rot));
+}
+
 document.getElementById("rotate_switch").onclick = function() {
     console.log("test");
     if (autoRotate) {
         autoRotate = false;
-        this.innerHTML = 'Start Autorotate'
+        this.innerHTML = 'Start Animation'
     } else {
         autoRotate = true;
         camera.position.x = 20;
         camera.position.y = 0;
-        this.innerHTML = 'Stop Autorotate'
+        this.innerHTML = 'Stop Animation'
     }
 }
 
