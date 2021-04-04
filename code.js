@@ -27,16 +27,17 @@ function main() {
     // get size of container holding canvas
     const container = document.querySelector('#container');
     const width = container.clientWidth;
+    const height = width * 2 / 3;
 
     const canvas = document.querySelector('#canvas');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setSize(width, width);
+    renderer.setSize(width, height);
     renderer.setPixelRatio(window.devicePixelRatio);
 
-    scene.background = new THREE.Color(0xeeeeee);
+    scene.background = new THREE.Color(0xf8f8f8);
     scene.rotation.set(0, 0, deg2rad(scene_rot));
 
-    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 3000);
+    camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 3000);
     camera.position.x = 0;
     camera.position.y = 0;
     camera.position.z = 150;
@@ -73,7 +74,7 @@ function lights(scene) {
     {
         // Ambient Light
         const color = 0xffffff;
-        const intensity = 0.6;
+        const intensity = 1.1;
         const light = new THREE.AmbientLight(color, intensity);
         scene.add(light);
     }
@@ -81,29 +82,29 @@ function lights(scene) {
     {
         // Spot/Directional Lights
         const color = 0xFFFFFF;
-        const intensity = 0.7;
+        const intensity = 0.15;
         const distance = 1000;
-        const height = 100;
+        const height = 1000;
 
-        const light = new THREE.PointLight(color, intensity);
-        light.position.set(0, -distance, height);
-        scene.add(light);
+        const light1 = new THREE.PointLight(color, intensity, 0, 2);
+        light1.position.set(0, -distance, height);
+        scene.add(light1);
 
-        const light2 = new THREE.PointLight(color, intensity);
+        const light2 = new THREE.PointLight(color, intensity, 0, 2);
         light2.position.set(0, distance, height);
         scene.add(light2);
 
-        const light3 = new THREE.PointLight(color, intensity);
+        const light3 = new THREE.PointLight(color, intensity, 0, 2);
         light3.position.set(-distance, 0, height);
         scene.add(light3);
 
-        const light4 = new THREE.PointLight(color, intensity);
+        const light4 = new THREE.PointLight(color, intensity, 0, 2);
         light4.position.set(distance, 0, height);
         scene.add(light4);
 
-        const light6 = new THREE.PointLight(0xffffff, intensity);
-        light6.position.set(200, -300, 1750);
-        scene.add(light6);
+        const light5 = new THREE.PointLight(color, intensity, 0, 2);
+        light5.position.set(200, -300, height);
+        scene.add(light5);
     }
 }
 
@@ -113,7 +114,7 @@ function car_image(scene) {
     const loader = new THREE.TextureLoader();
     const texture = loader.load('car2_top.png');
     const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-    const material = new THREE.MeshBasicMaterial({ map: texture, opacity: 0.5, transparent: true });
+    const material = new THREE.MeshBasicMaterial({ map: texture, opacity: 0.25, transparent: true });
     const mesh = new THREE.Mesh(planeGeo, material);
     mesh.material.side = THREE.DoubleSide;
     mesh.position.z -= 12;
@@ -177,7 +178,6 @@ function axes(scene) {
 
 function arrow(color, axis_len) {
     // Create an axis arrow in the specified color
-    // const axis_len = 50;
     const arrow_len = 3;
     const axis_dia = 0.2;
 
@@ -199,53 +199,6 @@ function arrow(color, axis_len) {
 
 function deg2rad(angle) {
     return angle * Math.PI / 180.0;
-}
-
-
-console.clear();
-
-// Register function handlers to preset button
-for (var i = 1; i < 99; i++) {
-    const id = `pos${i}`;
-    var obj = document.getElementById(id)
-    if (obj) {
-        obj.addEventListener('click', setPos);
-    }
-}
-
-// Register function handlers for sliders
-slider_roll.oninput = function() {
-    setObject("x", this.value, device.rotation.y, device.rotation.z);
-}
-
-slider_pitch.oninput = function() {
-    setObject("y", device.rotation.x, this.value, device.rotation.z);
-}
-
-slider_yaw.oninput = function() {
-    setObject("z", device.rotation.x, device.rotation.y, this.value);
-}
-
-document.getElementById("view_reset").onclick = function() {
-    controls.reset();
-}
-
-document.getElementById("view_rotate").onclick = function() {
-    scene_rot -= 45;
-    scene.rotation.set(0, 0, deg2rad(scene_rot));
-}
-
-document.getElementById("rotate_switch").onclick = function() {
-    console.log("test");
-    if (autoRotate) {
-        autoRotate = false;
-        this.innerHTML = 'Start Animation'
-    } else {
-        autoRotate = true;
-        camera.position.x = 20;
-        camera.position.y = 0;
-        this.innerHTML = 'Stop Animation'
-    }
 }
 
 function setPos(obj) {
@@ -275,6 +228,54 @@ function setObject(mode, roll, pitch, yaw) {
         slider_yaw.value = yaw;
         value_yaw.innerHTML = yaw;
         device.rotation.z = deg2rad(yaw); // Z: Yaw (0..360)
+    }
+}
+
+
+console.clear();
+
+// Register function handlers to preset button
+for (var i = 1; i < 99; i++) {
+    const id = `pos${i}`;
+    var obj = document.getElementById(id)
+    if (obj) {
+        obj.addEventListener('click', setPos);
+    }
+}
+
+// Register function handlers for sliders
+slider_roll.oninput = function() {
+    setObject("x", this.value, device.rotation.y, device.rotation.z);
+}
+
+slider_pitch.oninput = function() {
+    setObject("y", device.rotation.x, this.value, device.rotation.z);
+}
+
+slider_yaw.oninput = function() {
+    setObject("z", device.rotation.x, device.rotation.y, this.value);
+}
+
+// Function handlers for view operations
+document.getElementById("view_reset").onclick = function() {
+    controls.reset();
+}
+
+document.getElementById("view_rotate").onclick = function() {
+    scene_rot -= 45;
+    scene.rotation.set(0, 0, deg2rad(scene_rot));
+}
+
+document.getElementById("rotate_switch").onclick = function() {
+    console.log("test");
+    if (autoRotate) {
+        autoRotate = false;
+        this.innerHTML = 'Start Animation'
+    } else {
+        autoRotate = true;
+        camera.position.x = 20;
+        camera.position.y = 0;
+        this.innerHTML = 'Stop Animation'
     }
 }
 

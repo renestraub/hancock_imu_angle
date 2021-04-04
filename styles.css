@@ -79,6 +79,18 @@ body {
     color: white;
 }
 
+.red {
+    color: #ee0000;
+}
+
+.green {
+    color: #00bb00;
+}
+
+.blue {
+    color: #0000ee;
+}
+
 .slider {
     -webkit-appearance: none;
     width: 100%;
