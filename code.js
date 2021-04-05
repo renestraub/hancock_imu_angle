@@ -7,17 +7,20 @@ import * as THREE from './node_modules/three/build/three.module.js';
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 
+const box_file = "NG800_cardbox_gray_v1.glb";
+// const box_file = "NG800_cardbox_blue_v1.glb";
+
 const scene = new THREE.Scene();
 const device = new THREE.Group();
 var controls = null;
 var camera = null;
 
-var slider_roll = document.getElementById("slider_roll")
-var slider_pitch = document.getElementById("slider_pitch")
-var slider_yaw = document.getElementById("slider_yaw")
-var value_roll = document.getElementById("value_roll")
-var value_pitch = document.getElementById("value_pitch")
-var value_yaw = document.getElementById("value_yaw")
+var slider_roll = document.getElementById("slider_roll");
+var slider_pitch = document.getElementById("slider_pitch");
+var slider_yaw = document.getElementById("slider_yaw");
+var value_roll = document.getElementById("value_roll");
+var value_pitch = document.getElementById("value_pitch");
+var value_yaw = document.getElementById("value_yaw");
 
 var autoRotate = false;
 var scene_rot = 180; // Make car look to the left (x-axis)
@@ -126,7 +129,7 @@ function car_image(scene) {
 function hancock_box(scene) {
     // Hancock Enclosure
     const gltfLoader = new GLTFLoader();
-    gltfLoader.load('NG800_cardbox_gray_v1.glb', (gltf) => {
+    gltfLoader.load(box_file, (gltf) => {
         const scale = 250;
         const obj = gltf.scene;
 
