@@ -36,6 +36,8 @@ function main() {
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.gammaOutput = true;
+    renderer.gammaFactor = 2.2;
 
     scene.background = new THREE.Color(0xf8f8f8);
     scene.rotation.set(0, 0, deg2rad(scene_rot));
@@ -77,7 +79,7 @@ function lights(scene) {
     {
         // Ambient Light
         const color = 0xffffff;
-        const intensity = 1.1;
+        const intensity = 0.25;
         const light = new THREE.AmbientLight(color, intensity);
         scene.add(light);
     }
