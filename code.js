@@ -196,7 +196,7 @@ function add_hancock_neom9() {
 
 function exchange_cad_model(model_name) {
     if (model_name != current_model) {
-        console.log("Loading model for" + model_name);
+        console.log("Loading model for " + model_name);
 
         // Remove existing box from scene
         device.remove(box_cad_model)
@@ -337,7 +337,7 @@ document.getElementById("rotate_switch").onclick = function() {
 }
 
 document.getElementById("model").selectedIndex = 0;
-document.getElementById("model").onclick = function() {
+document.getElementById("model").onchange = function() {
     const selection = this.options[this.selectedIndex].text
     exchange_cad_model(selection)
 }
