@@ -161,8 +161,8 @@ function add_hancock_neom8() {
         const obj = gltf.scene;
 
         obj.scale.set(scale, scale, scale);
+        obj.position.set(5.6 * scale / 100, 3.2 * scale / 100, 0);
         obj.rotation.set(deg2rad(90), deg2rad(-180), deg2rad(0));
-        obj.position.set(5.6 * scale / 100, 2.5 * scale / 100, 0);
 
         // Remove metal surface so that ambient light can work
         obj.traverse(child => {
@@ -181,7 +181,7 @@ function add_hancock_neom9() {
         const obj = gltf.scene;
 
         obj.scale.set(scale, scale, scale);
-        obj.position.set(-5.6 * scale / 100, -2.5 * scale / 100, 0);
+        obj.position.set(-5.6 * scale / 100, -3.2 * scale / 100, 0);
         obj.rotation.set(deg2rad(90), deg2rad(0), deg2rad(0));
 
         // Remove metal surface so that ambient light can work
