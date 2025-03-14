@@ -10,6 +10,17 @@ To execute locally run ```webserver.py``` with a Python interpreter. Then browse
 
 ### Revision History
 
+#### v0.3.0 (20230121)
+
+- Support for NITROC with ZED-F9
+
+
+#### v0.3.0 (20230121)
+
+- Support for NG800/VCU Pro with NEO-M9 prepared
+- Added drop down to select device
+
+
 #### v0.2.0 (20210405)
 
 - Use black Hancock enclosure model.
