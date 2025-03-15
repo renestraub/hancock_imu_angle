@@ -125,6 +125,31 @@ body {
     cursor: pointer;
 }
 
+
+/* The container must be positioned relative: */
+.custom-select {
+    position: relative;
+    display: inline-block;
+}
+
+.select {
+    background-color: #4CAF50;
+    /* Green */
+    border: none;
+    color: white;
+    padding: 4px 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: Arial, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    margin: 2px 6px;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 6px;
+}
+
+
 #container {
     /* Container holding canvas and texts */
     position: relative;

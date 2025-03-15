@@ -3,17 +3,25 @@
 // import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/examples/jsm/loaders/GLTFLoader.js';
 
 // npm install three
+//   module are under node_modules/three/examples
 import * as THREE from './node_modules/three/build/three.module.js';
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
+import { TransformControls } from './node_modules/three/examples/jsm/controls/TransformControls.js';
 import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { SimplifyModifier } from './node_modules/three/examples/jsm/modifiers/SimplifyModifier.js';
 
-const box_file = "NG800_cardbox_gray_v1.glb";
-// const box_file = "NG800_cardbox_blue_v1.glb";
+const hancock_neom8 = "NG800_cardbox_gray_v1.glb";
+const hancock_neom9 = "Hancock_Enclosure_V2.glb";
+const nitroc_zed = "NB3900_ID_envelope_v16_reduced2.glb";
 
 const scene = new THREE.Scene();
-const device = new THREE.Group();
-var controls = null;
+const device = new THREE.Group();   // router cad model with arrows, dedicated group, we can apply transformations to
+const gltfLoader = new GLTFLoader();
+
+var box_cad_model = null;
+var orbit = null;
 var camera = null;
+var control = null;
 
 var slider_roll = document.getElementById("slider_roll");
 var slider_pitch = document.getElementById("slider_pitch");
@@ -24,6 +32,8 @@ var value_yaw = document.getElementById("value_yaw");
 
 var autoRotate = false;
 var scene_rot = 180; // Make car look to the left (x-axis)
+
+var current_model = "";
 
 
 function main() {
@@ -48,14 +58,34 @@ function main() {
     camera.position.z = 150;
     camera.lookAt(scene.position);
 
-    controls = new OrbitControls(camera, canvas);
-    controls.target.set(0, 0, 0);
-    controls.update();
+    orbit = new OrbitControls(camera, canvas);
+    orbit.target.set(0, 0, 0);
+    orbit.update();
+    orbit.enabled = true;
+
+    control = new TransformControls(camera, renderer.domElement);
+    control.addEventListener('change', render);
+    control.addEventListener('dragging-changed', function (event) {
+    //     orbit.enabled = !event.value;
+        console.log("dragging");
+    } );
+    control.setRotationSnap(THREE.MathUtils.degToRad(30));
+    control.setMode('rotate');
+    control.showX = true;
+    control.showY = false;
+    control.showZ = false;
+    control.enabled = false;
+    control.scale.set(2, 2, 2);
+    control.rotation.set(deg2rad(90), deg2rad(-180), deg2rad(0));
 
     lights(scene);
     axes(scene);
     car_image(scene);
-    hancock_box(scene);
+    add_device_axes(scene)
+    exchange_cad_model("VCU Pro - NEO-M8")
+
+    // control.attach(device);
+    // scene.add(control);
 
     function render() {
         renderer.render(scene, camera);
@@ -128,16 +158,35 @@ function car_image(scene) {
     scene.add(mesh);
 }
 
-function hancock_box(scene) {
-    // Hancock Enclosure
-    const gltfLoader = new GLTFLoader();
-    gltfLoader.load(box_file, (gltf) => {
+function add_device_axes(scene) {
+    // Axis of device: x points to left, y downwards
+    const arrow_x = arrow(0xaa0000, 15);
+    arrow_x.rotation.set(0, 0, deg2rad(-90));
+    arrow_x.position.z = 10;
+    device.add(arrow_x);
+
+    const arrow_y = arrow(0x00aa00, 10);
+    arrow_y.rotation.set(0, 0, deg2rad(0));
+    arrow_y.position.z = 10;
+    device.add(arrow_y);
+
+    const arrow_z = arrow(0x0000aa, 10);
+    arrow_z.rotation.set(deg2rad(90), 0, 0, 0);
+    arrow_z.position.z = 10;
+    device.add(arrow_z);
+
+    scene.add(device);
+}
+
+function add_hancock_neom8() {
+    // NG800 / VCU Pro with NEO-M8
+    gltfLoader.load(hancock_neom8, (gltf) => {
         const scale = 250;
         const obj = gltf.scene;
 
         obj.scale.set(scale, scale, scale);
+        obj.position.set(5.6 * scale / 100, 3.2 * scale / 100, 0);
         obj.rotation.set(deg2rad(90), deg2rad(-180), deg2rad(0));
-        obj.position.set(5.6 * scale / 100, 2.5 * scale / 100, 0);
 
         // Remove metal surface so that ambient light can work
         obj.traverse(child => {
@@ -145,25 +194,76 @@ function hancock_box(scene) {
         });
 
         device.add(obj);
-
-        // Axis of enclosure
-        const arrow_x = arrow(0xaa0000, 10);
-        arrow_x.rotation.set(0, 0, deg2rad(-90));
-        arrow_x.position.z = 10;
-        device.add(arrow_x);
-
-        const arrow_y = arrow(0x00aa00, 10);
-        arrow_y.rotation.set(0, 0, deg2rad(0));
-        arrow_y.position.z = 10;
-        device.add(arrow_y);
-
-        const arrow_z = arrow(0x0000aa, 10);
-        arrow_z.rotation.set(deg2rad(90), 0, 0, 0);
-        arrow_z.position.z = 10;
-        device.add(arrow_z);
-
-        scene.add(device);
+        box_cad_model = obj
     });
+}
+
+function add_hancock_neom9() {
+    // NG800 / VCU Pro with NEO-M9
+    gltfLoader.load(hancock_neom9, (gltf) => {
+        const scale = 250;
+        const obj = gltf.scene;
+
+        obj.scale.set(scale, scale, scale);
+        // obj.position.set(0 * scale / 100, 0 * scale / 100, 0);
+        obj.rotation.set(deg2rad(90), deg2rad(0), deg2rad(0));
+
+        // Remove metal surface so that ambient light can work
+        obj.traverse(child => {
+            if (child.material) child.material.metalness = 0;
+        });
+
+        device.add(obj);
+        box_cad_model = obj
+    });
+}
+
+function add_nitroc_zed() {
+    // NITROC
+    gltfLoader.load(nitroc_zed, (gltf) => {
+        const scale = 150;
+        const obj = gltf.scene;
+
+        obj.scale.set(scale, scale, scale);
+        // obj.position.set(0 * scale / 100, 0 * scale / 100, 0);
+        obj.rotation.set(deg2rad(90), deg2rad(0), deg2rad(0));
+
+        // Remove metal surface so that ambient light can work
+        obj.traverse(child => {
+            if (child.material) child.material.metalness = 0;
+        });
+
+        device.add(obj);
+        box_cad_model = obj
+    });
+}
+
+function exchange_cad_model(model_name) {
+    if (model_name != current_model) {
+        console.log("Loading model for " + model_name);
+
+        // Remove existing box from scene
+        device.remove(box_cad_model)
+        box_cad_model = null
+
+        // Load desired device model
+        switch (model_name) {
+            case "VCU Pro - NEO-M8":
+                add_hancock_neom8();
+                break;
+            case "VCU Pro - NEO-M9":
+                add_hancock_neom9();
+                break;
+            case "NITROC - ZED":
+                add_nitroc_zed();
+                break;
+            default:
+                add_hancock_neom8();
+                break;
+        }
+
+        current_model = model_name;
+    }
 }
 
 function axes(scene) {
@@ -177,7 +277,7 @@ function axes(scene) {
     scene.add(arrow_y);
 
     const arrow_z = arrow(0x0000ee, 30);
-    arrow_z.rotation.set(deg2rad(90), 0, 0, 0);
+    arrow_z.rotation.set(deg2rad(90), 0, 0);
     scene.add(arrow_z);
 }
 
@@ -239,7 +339,7 @@ function setObject(mode, roll, pitch, yaw) {
 
 console.clear();
 
-// Register function handlers to preset button
+// Register function handlers to preset buttons
 for (var i = 1; i < 99; i++) {
     const id = `pos${i}`;
     var obj = document.getElementById(id)
@@ -263,7 +363,7 @@ slider_yaw.oninput = function() {
 
 // Function handlers for view operations
 document.getElementById("view_reset").onclick = function() {
-    controls.reset();
+    orbit.reset();
 }
 
 document.getElementById("view_rotate").onclick = function() {
@@ -272,7 +372,6 @@ document.getElementById("view_rotate").onclick = function() {
 }
 
 document.getElementById("rotate_switch").onclick = function() {
-    console.log("test");
     if (autoRotate) {
         autoRotate = false;
         this.innerHTML = 'Start Animation'
@@ -283,5 +382,23 @@ document.getElementById("rotate_switch").onclick = function() {
         this.innerHTML = 'Stop Animation'
     }
 }
+
+document.getElementById("model").selectedIndex = 0;
+document.getElementById("model").onchange = function() {
+    const selection = this.options[this.selectedIndex].text
+    exchange_cad_model(selection)
+}
+
+window.addEventListener('keydown', function(event) {
+    // console.log('key event');
+    // console.log((event.code));
+    switch (event.code) {
+        case 'KeyX':
+            console.log('toggling mode');
+            control.enabled = !control.enabled;
+            orbit.enabled = !control.enabled;
+            break;
+    }
+} );
 
 main();
